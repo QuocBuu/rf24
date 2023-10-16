@@ -1,0 +1,2 @@
+sources/app/screens/scr_nf24.cpp:22:6:void view_scr_nf24()	24	static
+sources/app/screens/scr_nf24.cpp:107:6:void scr_nf24_handle(ak_msg_t*)	16	static
