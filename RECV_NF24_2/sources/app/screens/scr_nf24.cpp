@@ -3,6 +3,10 @@
 static void view_scr_nf24();
 
 int led_b5;
+int recv_data;
+
+void nf24_pure_send(uint8_t add, task_id_t des_task_id, uint8_t sig);
+void nf24_common_send(uint8_t add, task_id_t des_task_id, uint8_t sig, uint8_t *data, uint8_t len);
 
 view_dynamic_t dyn_view_startup = {
 	{
@@ -41,17 +45,17 @@ void view_scr_nf24() {
 	view_render.setTextColor(WHITE);
 	// Address Receive
 	view_render.setCursor(3, 18);
-	view_render.print("Add R");
+	view_render.print("Add Me");
 	if(1) {
 		static char add_r[32];
 		snprintf(add_r, \
 				sizeof(add_r), \
 				"%d.%d.%d.%d.%d", \
-				mac_des_addr[0], \
-				mac_des_addr[1], \
-				mac_des_addr[2], \
-				mac_des_addr[3], \
-				mac_des_addr[4]);
+				mac_src_addr[0], \
+				mac_src_addr[1], \
+				mac_src_addr[2], \
+				mac_src_addr[3], \
+				mac_src_addr[4]);
 		view_render.setCursor(45, 18);
 		view_render.print(add_r);
 		
@@ -68,11 +72,11 @@ void view_scr_nf24() {
 		snprintf(add_s, \
 				sizeof(add_s), \
 				"%d.%d.%d.%d.%d", \
-				mac_src_addr[0], \
-				mac_src_addr[1], \
-				mac_src_addr[2], \
-				mac_src_addr[3], \
-				mac_src_addr[4]);
+				mac_des_addr[0], \
+				mac_des_addr[1], \
+				mac_des_addr[2], \
+				mac_des_addr[3], \
+				mac_des_addr[4]);
 		view_render.setCursor(45, 30);
 		view_render.print(add_s);
 	}
@@ -81,10 +85,10 @@ void view_scr_nf24() {
 		view_render.print("...");
 	}
 	view_render.setCursor(3, 42);
-	view_render.print("Size");
-	if(0) {
+	view_render.print("Data");
+	if(1) {
 		view_render.setCursor(45, 42);
-		view_render.print("Addr Recv");
+		view_render.print(recv_data);
 	}
 	else {
 		view_render.setCursor(45, 42);
@@ -102,7 +106,6 @@ void view_scr_nf24() {
 		view_render.drawCircle(65, 57, 4, WHITE);
 		view_render.print("OFF");
 	} 
-		
 }
 
 void scr_nf24_handle(ak_msg_t* msg) {
@@ -111,6 +114,8 @@ void scr_nf24_handle(ak_msg_t* msg) {
 		APP_DBG_SIG("AC_DISPLAY_INITIAL\n");
 		view_render.initialize();
 		view_render_display_on();
+
+		// timer_set(AC_TASK_DISPLAY_ID, SCR_NF24_COMMON_SEND, 5000, TIMER_ONE_SHOT);
 		// timer_set(AC_TASK_DISPLAY_ID, AC_DISPLAY_SHOW_LOGO, AC_DISPLAY_STARTUP_INTERVAL, TIMER_ONE_SHOT);
 	}
 		break;
@@ -125,22 +130,88 @@ void scr_nf24_handle(ak_msg_t* msg) {
 			led_B5_on();
 			led_b5 = 1;
 		}
+		// if (counter == 3) {
+			// task_post_common_msg(AC_TASK_RF24_IF_ID, AC_RF24_IF_COMMON_MSG_OUT, (uint8_t*)&buu, sizeof(buu));
+		// }
 	}
 		break;
 
-	case AC_DISPLAY_SHOW_LOGO: {
-		APP_DBG_SIG("AC_DISPLAY_SHOW_LOGO\n");
-		// SCREEN_TRAN(scr_info_handle, &scr_info);
+	case AC_DISPLAY_BUTON_UP_RELEASED: {
+		APP_DBG_SIG("AC_DISPLAY_BUTON_UP_RELEASED\n");
 	}
 		break;
 
-	case AC_DISPLAY_SHOW_IDLE: {
-		APP_DBG_SIG("AC_DISPLAY_SHOW_IDLE\n");
-		// SCREEN_TRAN(scr_idle_handle, &scr_idle);
+	case AC_DISPLAY_BUTON_DOWN_RELEASED: {
+		APP_DBG_SIG("AC_DISPLAY_BUTON_DOWN_RELEASED\n");
+	}
+		break;
+
+	case SCR_NF24_PURE_SEND: {
+		APP_DBG_SIG("SCR_NF24_PURE_SEND\n");
+	}
+		break;
+
+	case SCR_NF24_COMMON_SEND: {
+		APP_DBG_SIG("SCR_NF24_COMMON_SEND\n");
+		recv_data++;
+		nf24_common_send(5, \
+						AC_TASK_DISPLAY_ID, \
+						SCR_NF24_COMMON_RECV, \
+						(uint8_t*)&recv_data, \
+						sizeof(recv_data));
+	}
+		break;
+
+	case SCR_NF24_PURE_RECV: {
+		APP_DBG_SIG("SCR_NF24_PURE_RECV\n");
+	}
+		break;
+
+	case SCR_NF24_COMMON_RECV: {
+		APP_DBG_SIG("SCR_NF24_COMMON_RECV\n");
+
+		if(led_b5 != 0) {
+			led_B5_off();
+			led_b5 = 0;
+		}
+		else {
+			led_B5_on();
+			led_b5 = 1;
+		}
+
+		uint8_t *inData = get_data_common_msg(msg);
+		recv_data = *(int *)inData;
+		timer_set(AC_TASK_DISPLAY_ID, SCR_NF24_COMMON_SEND, 1000, TIMER_ONE_SHOT);
 	}
 		break;
 
 	default:
 		break;
 	}
+}
+
+void nf24_pure_send(uint8_t add, task_id_t des_task_id, uint8_t sig) {
+	// init message
+	ak_msg_t* p_msg = get_pure_msg();
+	// setup message
+	set_if_src_task_id(p_msg, AC_TASK_RF24_IF_ID);
+	set_if_des_task_id(p_msg, des_task_id);
+	set_if_des_type(p_msg, add);
+	set_if_sig(p_msg, sig);
+	// send message
+	set_msg_sig(p_msg, AC_IF_PURE_MSG_OUT);
+	task_post(AC_TASK_IF_ID, p_msg);
+}
+
+void nf24_common_send(uint8_t add, task_id_t des_task_id, uint8_t sig, uint8_t *data, uint8_t len) {
+	ak_msg_t* c_msg = get_common_msg();
+
+	set_if_src_task_id(c_msg, AC_TASK_RF24_IF_ID);
+	set_if_des_task_id(c_msg, des_task_id);
+	set_if_des_type(c_msg, add);
+	set_if_sig(c_msg, sig);
+	set_if_data_common_msg(c_msg, data, len);
+
+	set_msg_sig(c_msg, AC_IF_COMMON_MSG_OUT);
+	task_post(AC_TASK_IF_ID, c_msg);
 }

@@ -54,8 +54,7 @@ void task_rf24_if(ak_msg_t* msg) {
 
 	case AC_RF24_IF_COMMON_MSG_OUT: {
 		APP_DBG_SIG("AC_RF24_IF_COMMON_MSG_OUT\n");
-		// nrf_set_des_nwk_addr(msg->if_des_type);
-		nrf_set_des_nwk_addr(1);
+		nrf_set_des_nwk_addr(msg->if_des_type);
 
 		/* forward message to nwk layer */
 		msg_inc_ref_count(msg);

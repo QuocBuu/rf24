@@ -154,7 +154,24 @@ enum {
 	AC_DISPLAY_SHOW_MERRY_CHRISTMAS_SNOW_MOVING_UPDATE,
 	AC_DISPLAY_SHOW_MERRY_CHRISTMAS_SLEEP,
 	AC_DISPLAY_SHOW_MODBUS_PULL_UPDATE,
-	AC_DISPLAY_SHOW_MODBUS_PULL_SLEEP
+	AC_DISPLAY_SHOW_MODBUS_PULL_SLEEP,
+	AC_DISPLAY_LIFE_END
+};
+
+/*****************************************************************************/
+/*  LIFE task define
+ */
+/*****************************************************************************/
+/* define timer */
+#define SCR_NF24_SEND_INTERVAL										(3000)
+
+/* define signal */
+enum {
+	SCR_NF24_PURE_SEND = AC_DISPLAY_LIFE_END,
+	SCR_NF24_COMMON_SEND,
+	SCR_NF24_PURE_RECV,
+	SCR_NF24_COMMON_RECV,
+	SCR_NF24_INTERRUPT_SEND
 };
 
 /*****************************************************************************/
