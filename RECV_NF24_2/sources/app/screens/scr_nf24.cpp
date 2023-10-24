@@ -4,11 +4,15 @@ static void view_scr_nf24();
 
 int led_b5;
 int recv_data;
+char textToSend[32] = "Hello, Phan Quoc Buu!";
+char textToRecv[32];
+
+// uint8_t add_send;
 
 void nf24_pure_send(uint8_t add, task_id_t des_task_id, uint8_t sig);
 void nf24_common_send(uint8_t add, task_id_t des_task_id, uint8_t sig, uint8_t *data, uint8_t len);
 
-view_dynamic_t dyn_view_startup = {
+view_dynamic_t dyn_view_nf24 = {
 	{
 		.item_type = ITEM_TYPE_DYNAMIC,
 	},
@@ -16,7 +20,7 @@ view_dynamic_t dyn_view_startup = {
 };
 
 view_screen_t scr_nf24 = {
-	&dyn_view_startup,
+	&dyn_view_nf24,
 	ITEM_NULL,
 	ITEM_NULL,
 
@@ -34,7 +38,6 @@ void view_scr_nf24() {
 	view_render.drawFastHLine(0, 15+12*4, 128, WHITE);
 	view_render.drawFastVLine(40, 15, 50, WHITE);
 	view_render.drawFastVLine(95, 52, 12, WHITE);
-
 
 	view_render.setTextSize(1);
 	view_render.setTextColor(WHITE);
@@ -89,6 +92,7 @@ void view_scr_nf24() {
 	if(1) {
 		view_render.setCursor(45, 42);
 		view_render.print(recv_data);
+		view_render.print(textToRecv);
 	}
 	else {
 		view_render.setCursor(45, 42);
@@ -115,6 +119,7 @@ void scr_nf24_handle(ak_msg_t* msg) {
 		view_render.initialize();
 		view_render_display_on();
 
+		SCREEN_TRAN(scr_chat_handle, &scr_chat);
 		// timer_set(AC_TASK_DISPLAY_ID, SCR_NF24_COMMON_SEND, 5000, TIMER_ONE_SHOT);
 		// timer_set(AC_TASK_DISPLAY_ID, AC_DISPLAY_SHOW_LOGO, AC_DISPLAY_STARTUP_INTERVAL, TIMER_ONE_SHOT);
 	}
@@ -154,11 +159,11 @@ void scr_nf24_handle(ak_msg_t* msg) {
 	case SCR_NF24_COMMON_SEND: {
 		APP_DBG_SIG("SCR_NF24_COMMON_SEND\n");
 		recv_data++;
-		nf24_common_send(5, \
+		nf24_common_send(IF_TYPE_RF24_YOU, \
 						AC_TASK_DISPLAY_ID, \
 						SCR_NF24_COMMON_RECV, \
-						(uint8_t*)&recv_data, \
-						sizeof(recv_data));
+						(uint8_t*)&textToSend, \
+						sizeof(textToSend));
 	}
 		break;
 
@@ -179,9 +184,12 @@ void scr_nf24_handle(ak_msg_t* msg) {
 			led_b5 = 1;
 		}
 
-		uint8_t *inData = get_data_common_msg(msg);
-		recv_data = *(int *)inData;
-		timer_set(AC_TASK_DISPLAY_ID, SCR_NF24_COMMON_SEND, 1000, TIMER_ONE_SHOT);
+		// uint8_t *inData = get_data_common_msg(msg);
+		// recv_data = *(int *)inData;
+
+		memcpy(&textToRecv, get_data_common_msg(msg), sizeof(textToRecv));
+		
+		// timer_set(AC_TASK_DISPLAY_ID, SCR_NF24_COMMON_SEND, 1000, TIMER_ONE_SHOT);
 	}
 		break;
 

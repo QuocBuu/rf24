@@ -1,5 +1,5 @@
-#ifndef __scr_nf24_H__
-#define __scr_nf24_H__
+#ifndef __SCR_NF24_H__
+#define __SCR_NF24_H__
 
 #include "fsm.h"
 #include "port.h"
@@ -19,9 +19,15 @@
 
 #include "nrf_data.h"
 
+#include "scr_chat.h"
+
+extern int recv_data;
+
+extern void nf24_common_send(uint8_t add, task_id_t des_task_id, uint8_t sig, uint8_t *data, uint8_t len);
+
 extern view_dynamic_t dyn_view_startup;
 
 extern view_screen_t scr_nf24;
 extern void scr_nf24_handle(ak_msg_t* msg);
 
-#endif //__scr_nf24_H__
+#endif //__SCR_NF24_H__

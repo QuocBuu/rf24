@@ -15,9 +15,9 @@
 #define MAX_PHY_PAYLOAD_LEN				32
 
 /* DEBUG */
-#define NRF_DBG_SIG_EN		1
-#define NRF_DBG_DATA_EN		1
-#define NRF_DBG_EN			1
+#define NRF_DBG_SIG_EN		0
+#define NRF_DBG_DATA_EN		0
+#define NRF_DBG_EN			0
 
 #if (NRF_DBG_SIG_EN == 1)
 #define NRF_DBG_SIG(fmt, ...)       xprintf("-LSIG-> " fmt, ##__VA_ARGS__)

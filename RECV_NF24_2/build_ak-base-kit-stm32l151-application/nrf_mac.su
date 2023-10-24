@@ -1,0 +1,1 @@
+sources/networks/rf_protocols/rf24/nwk/nrf_mac.cpp:94:6:void task_rf24_mac(ak_msg_t*)	32	static

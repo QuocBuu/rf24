@@ -1,0 +1,4 @@
+sources/app/screens/scr_nf24.cpp:187:6:void nf24_pure_send(uint8_t, task_id_t, uint8_t)	16	static
+sources/app/screens/scr_nf24.cpp:200:6:void nf24_common_send(uint8_t, task_id_t, uint8_t, uint8_t*, uint8_t)	32	static
+sources/app/screens/scr_nf24.cpp:28:6:void view_scr_nf24()	24	static
+sources/app/screens/scr_nf24.cpp:114:6:void scr_nf24_handle(ak_msg_t*)	16	static

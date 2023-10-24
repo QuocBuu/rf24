@@ -15,9 +15,9 @@ extern "C"
 //		PA7 --> MOSI
 //		PA6 <-- MISO
 //		PA5 --> SCK
-//		PB9  --> CSN
-//		PA8  --> CE
-//		PB1  <-- IRQ
+//		PB9 --> CSN
+//		PA8 --> CE
+//		PB1 <-- IRQ
 
 // nRF24L01 SPI peripheral
 #define nRF24_SPI_PORT       SPI1
@@ -25,11 +25,11 @@ extern "C"
 // nRF24L01 GPIO peripherals
 #define nRF24_PORT_PERIPH    RCC_AHBPeriph_GPIOB | RCC_AHBPeriph_GPIOC
 
-// nRF24L01 CSN (Chip Select) pin (PC6)
+// nRF24L01 CSN (Chip Select) pin (PB9)
 #define nRF24_CSN_PORT       GPIOB
 #define nRF24_CSN_PIN        GPIO_Pin_9
 
-// nRF24L01 CE (Chip Enable) pin (PC7)
+// nRF24L01 CE (Chip Enable) pin (PA8)
 #define nRF24_CE_PORT        GPIOA
 #define nRF24_CE_PIN         GPIO_Pin_8
 

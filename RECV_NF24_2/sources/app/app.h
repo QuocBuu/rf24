@@ -159,7 +159,7 @@ enum {
 };
 
 /*****************************************************************************/
-/*  LIFE task define
+/*  SCR NF24 define
  */
 /*****************************************************************************/
 /* define timer */
@@ -171,7 +171,20 @@ enum {
 	SCR_NF24_COMMON_SEND,
 	SCR_NF24_PURE_RECV,
 	SCR_NF24_COMMON_RECV,
-	SCR_NF24_INTERRUPT_SEND
+	SCR_NF24_INTERRUPT_SEND,
+	SCR_NF24_SETUP_ADD_SEND,
+};
+
+/*****************************************************************************/
+/*  SCR Chat define
+ */
+/*****************************************************************************/
+/* define timer */
+/* define signal */
+enum {
+	SCR_CHAT_COMMON_SEND = AC_DISPLAY_LIFE_END,
+	SCR_CHAT_COMMON_RECV,
+	SCR_CHAT_CONTROL_LED
 };
 
 /*****************************************************************************/

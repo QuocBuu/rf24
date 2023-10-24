@@ -45,6 +45,7 @@
 #include "flash.h"
 
 #include "qrcode.h"
+#include "scr_nf24.h"
 
 /*****************************************************************************/
 /*  local declare
@@ -83,6 +84,12 @@ int32_t shell_buzzer(uint8_t* argv);
 int32_t shell_modbus(uint8_t* argv);
 
 /*****************************************************************************/
+/*  Chat NF24
+ */
+/*****************************************************************************/
+int32_t shell_chat(uint8_t* argv);
+
+/*****************************************************************************/
 /*  command table
  */
 /*****************************************************************************/
@@ -107,6 +114,11 @@ const cmd_line_t lgn_cmd_table[] = {
 	{(const int8_t*)"psv",		shell_psv,			(const int8_t*)"psv"},
 	{(const int8_t*)"beep",		shell_buzzer,		(const int8_t*)"buzzer play tones"},
 	{(const int8_t*)"modbus",	shell_modbus,		(const int8_t*)"modbus master"},
+
+	/*************************************************************************/
+	/* chat command */
+	/*************************************************************************/
+	{(const int8_t*)"chat",		shell_chat,			(const int8_t*)"chat with NF24"},
 
 	/*************************************************************************/
 	/* debug command */
@@ -148,6 +160,47 @@ char* str_parser_get_attr(uint8_t index) {
 		return str_list[index];
 	}
 	return NULL;
+}
+/*****************************************************************************/
+/*  chat command
+ */
+/*****************************************************************************/
+int32_t shell_chat(uint8_t* argv) {
+	switch (*(argv + 5)) {
+	case '1': {
+		// recv_data = (int)*(argv + 7);
+	}
+		break;
+
+	case '2': {
+		char chat_msg[32];
+		for(int i = 0; i < 32; i++) {
+			chat_msg[i] = *(argv + 7 + i);
+		}
+		task_post_common_msg(AC_TASK_DISPLAY_ID, SCR_CHAT_COMMON_SEND, (uint8_t*)&chat_msg, sizeof(chat_msg));
+	}
+		break;
+
+	case '3': {
+		BUZZER_PlayTones(tones_3beep);
+	}
+		break;
+
+	case '4': {
+		BUZZER_PlayTones(tones_merryChrismast);
+	}
+		break;
+
+	default:
+		LOGIN_PRINT("\n[HELP]\n");
+		LOGIN_PRINT("1. \"chat 1\"                           : init address send \n");
+		LOGIN_PRINT("2. \"chat 2\"                           : send message \n");
+		LOGIN_PRINT("3. \"chat 3\"                           : buzzer play tones three beeps \n");
+		LOGIN_PRINT("4. \"chat 4\"                           : buzzer play tones super mario bros \n");
+		break;
+	}
+
+	return 0;
 }
 
 /*****************************************************************************/

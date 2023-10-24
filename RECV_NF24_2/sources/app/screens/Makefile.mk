@@ -6,3 +6,4 @@ VPATH += sources/app/screens
 # CPP source files
 
 SOURCES_CPP += sources/app/screens/scr_nf24.cpp
+SOURCES_CPP += sources/app/screens/scr_chat.cpp

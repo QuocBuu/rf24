@@ -31,7 +31,7 @@ void task_rf24_if(ak_msg_t* msg) {
 
 		/* init network address */
 		// nrf_set_static_nwk_addr(IF_TYPE_RF24_ME);
-		nrf_set_static_nwk_addr(10);
+		nrf_set_static_nwk_addr(1);
 
 		/* init network state machine */
 		FSM(&nrf_nwk_fsm, nrf_nwk_fsm_init);
@@ -54,7 +54,8 @@ void task_rf24_if(ak_msg_t* msg) {
 
 	case AC_RF24_IF_COMMON_MSG_OUT: {
 		APP_DBG_SIG("AC_RF24_IF_COMMON_MSG_OUT\n");
-		nrf_set_des_nwk_addr(msg->if_des_type);
+		// nrf_set_des_nwk_addr(msg->if_des_type);
+		nrf_set_des_nwk_addr(1);
 
 		/* forward message to nwk layer */
 		msg_inc_ref_count(msg);
